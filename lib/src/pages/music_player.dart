@@ -1,6 +1,9 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player/src/helpers/helpers.dart';
+import 'package:music_player/src/models/audio_player_model.dart';
 import 'package:music_player/src/widgets/custom_appbar.dart';
+import 'package:provider/provider.dart';
 
 class MusicPlayerPage extends StatelessWidget {
   const MusicPlayerPage({Key? key}) : super(key: key);
@@ -96,8 +99,8 @@ class _TitlePlayState extends State<TitlePlay>
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 50),
-      margin: EdgeInsets.only(top: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 50),
+      margin: const EdgeInsets.only(top: 40),
       child: Row(
         children: [
           Column(
@@ -110,16 +113,21 @@ class _TitlePlayState extends State<TitlePlay>
                       fontSize: 15, color: Colors.white.withOpacity(0.5))),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           FloatingActionButton(
             elevation: 0,
             onPressed: () {
+              final audioPlayermodel =
+                  Provider.of<AudioPlayerModel>(context, listen: false);
+
               if (this.isPlaying) {
                 controller.reverse();
                 this.isPlaying = false;
+                audioPlayermodel.controller.stop();
               } else {
                 this.isPlaying = true;
                 controller.forward();
+                audioPlayermodel.controller.repeat();
               }
             },
             backgroundColor: Color(0xfff8cb51),
@@ -138,8 +146,8 @@ class ImagenDiscoYDuracion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 30),
-      margin: EdgeInsets.only(top: 70),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      margin: const EdgeInsets.only(top: 70),
       child: Row(
         children: [
           ImagenDisco(),
@@ -181,7 +189,7 @@ class BarraProgreso extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text("0:00", style: style),
         ],
       ),
@@ -192,6 +200,8 @@ class BarraProgreso extends StatelessWidget {
 class ImagenDisco extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final audioPlayermodel = Provider.of<AudioPlayerModel>(context);
+
     return Container(
       padding: const EdgeInsets.all(20),
       width: 250,
@@ -201,7 +211,17 @@ class ImagenDisco extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Image(image: AssetImage('assets/aurora.jpg')),
+            SpinPerfect(
+              animate: false,
+              manualTrigger: true,
+              controller: (animationcontroller) =>
+                  audioPlayermodel.controller = animationcontroller,
+              infinite: true,
+              duration: Duration(seconds: 10),
+              child: Image(
+                image: AssetImage('assets/aurora.jpg'),
+              ),
+            ),
             Container(
               width: 25,
               height: 25,
