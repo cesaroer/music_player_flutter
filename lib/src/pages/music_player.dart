@@ -70,7 +70,29 @@ class Lyrics extends StatelessWidget {
   }
 }
 
-class TitlePlay extends StatelessWidget {
+class TitlePlay extends StatefulWidget {
+  @override
+  State<TitlePlay> createState() => _TitlePlayState();
+}
+
+class _TitlePlayState extends State<TitlePlay>
+    with SingleTickerProviderStateMixin {
+  bool isPlaying = false;
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    this.controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -91,9 +113,20 @@ class TitlePlay extends StatelessWidget {
           Spacer(),
           FloatingActionButton(
             elevation: 0,
-            onPressed: () {},
+            onPressed: () {
+              if (this.isPlaying) {
+                controller.reverse();
+                this.isPlaying = false;
+              } else {
+                this.isPlaying = true;
+                controller.forward();
+              }
+            },
             backgroundColor: Color(0xfff8cb51),
-            child: Icon(Icons.play_arrow),
+            child: AnimatedIcon(
+              icon: AnimatedIcons.play_pause,
+              progress: controller,
+            ),
           )
         ],
       ),
