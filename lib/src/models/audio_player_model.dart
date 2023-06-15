@@ -8,7 +8,7 @@ class AudioPlayerModel with ChangeNotifier {
   String get songTotalDuration => this.printDuration(_songDuration);
   String get currentSecond => this.printDuration(_current);
 
-  double get porcentajeSong => (_songDuration.inSeconds < 0)
+  double get porcentajeSong => (_songDuration.inSeconds > 0)
       ? this._current.inSeconds / this._songDuration.inSeconds
       : 0;
 
